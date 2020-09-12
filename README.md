@@ -7,3 +7,11 @@ Table top card game in ThreeJS
 - TableScene
 - TableObject
 - TableObjectStack
+
+```
+npm install
+```
+
+```
+npm start
+```
