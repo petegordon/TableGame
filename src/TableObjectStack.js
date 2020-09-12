@@ -1,0 +1,1 @@
+class TableObjectStack extends Array {}
