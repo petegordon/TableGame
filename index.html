@@ -13,20 +13,61 @@
     </style>
   </head>
   <body>
+    <script src="src/libs/jquery-2.1.1.min.js"></script>
+    <script src="src/libs/strophe/strophe.js"></script>
+    <script src="src/libs/strophe/strophe.disco.min.js?v=1"></script>
+    <script src="src/libs/lib-jitsi-meet.min.js"></script>
+    <script src="src/libs/example.js"></script>
+
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r120/three.min.js"
       integrity="sha512-kgjZw3xjgSUDy9lTU085y+UCVPz3lhxAtdOVkcO4O2dKl2VSBcNsQ9uMg/sXIM4SoOmCiYfyFO/n1/3GSXZtSg=="
       crossorigin="anonymous"
     ></script>
+
     <script type="module">
       import TableScene from "./src/TableScene.js";
       import TableObject from "./src/TableObject.js";
+      import VideoPlaneMesh from "./src/VideoPlaneMesh.js";
+      window.addEventListener("DOMContentLoaded", (event) => {
+        let buttonStart = document.querySelector("#start");
+        buttonStart.addEventListener("click", () => {
+          let tableScene = new TableScene(THREE, window, document);
 
-      let tableScene = new TableScene(THREE, window, document);
+          let tableObj = new TableObject(tableScene);
 
-      let tableObj = new TableObject(tableScene);
+          let videos = document.querySelectorAll("video");
+          videos.forEach((v, index) => {
+            console.log(index);
+            let videoMesh = new VideoPlaneMesh(tableScene, v, index);
+          });
 
-      tableScene.initAnimate(tableObj.getObject());
+          tableScene.initAnimate(tableObj.getMesh());
+        });
+        console.log("DOM fully loaded and parsed");
+      });
+      /*
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        var constraints = {
+          video: { width: 1280, height: 720, facingMode: "user" },
+        };
+
+        navigator.mediaDevices
+          .getUserMedia(constraints)
+          .then(function (stream) {
+            // apply the stream to the video element used in the texture
+
+            video.srcObject = stream;
+            video.play();
+          })
+          .catch(function (error) {
+            console.error("Unable to access the camera/webcam.", error);
+          });
+      } else {
+        console.error("MediaDevices interface not available.");
+      }
+*/
     </script>
+    <button id="start" type="button">Start ThreeJS Scene</button>
   </body>
 </html>
