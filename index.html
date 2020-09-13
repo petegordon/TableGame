@@ -21,13 +21,10 @@
     <script type="module">
       import TableScene from "./src/TableScene.js";
       import TableObject from "./src/TableObject.js";
+
       let tableScene = new TableScene(THREE, window, document);
 
-      let tableObj = new TableObject(
-        THREE,
-        tableScene.getScene(),
-        tableScene.getCamera()
-      );
+      let tableObj = new TableObject(tableScene);
 
       tableScene.initAnimate(tableObj.getObject());
     </script>

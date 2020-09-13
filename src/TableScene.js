@@ -1,4 +1,4 @@
-import { OrbitControls } from "./OrbitControls.js";
+import { OrbitControls } from "./controls/OrbitControls.js";
 
 export default class TableScene {
   constructor(THREE, window, document) {
@@ -31,13 +31,16 @@ export default class TableScene {
     this.lights.push(light);
     this.scene.add(light);
 
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    //this.controls = new OrbitControls(this.camera, this.renderer.domElement);
   }
   getTHREE() {
     return this.THREE;
   }
   getScene() {
     return this.scene;
+  }
+  getRenderer() {
+    return this.renderer;
   }
   getCamera() {
     return this.camera;
