@@ -18,9 +18,9 @@
       integrity="sha512-kgjZw3xjgSUDy9lTU085y+UCVPz3lhxAtdOVkcO4O2dKl2VSBcNsQ9uMg/sXIM4SoOmCiYfyFO/n1/3GSXZtSg=="
       crossorigin="anonymous"
     ></script>
-    <script src="src/TableScene.js"></script>
     <script src="src/TableObject.js"></script>
-    <script>
+    <script type="module">
+      import TableScene from "./src/TableScene.js";
       let tableScene = new TableScene(THREE, window, document);
       let tableObj = new TableObject(
         THREE,

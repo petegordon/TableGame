@@ -1,4 +1,6 @@
-class TableScene {
+import { OrbitControls } from "./OrbitControls.js";
+
+export default class TableScene {
   constructor(THREE, window, document) {
     this.window = window;
     this.THREE = THREE;
@@ -13,6 +15,8 @@ class TableScene {
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(this.renderer.domElement);
+
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
   }
   getTHREE() {
     return this.THREE;
@@ -22,6 +26,9 @@ class TableScene {
   }
   getCamera() {
     return this.camera;
+  }
+  getControls() {
+    return this.controls;
   }
   initAnimate(obj) {
     this.window.requestAnimationFrame((t) => this.animate(obj));
