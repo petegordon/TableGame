@@ -52,7 +52,7 @@ export default class TableScene {
 
     this.scene.add(plane);
 
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    //this.controls = new OrbitControls(this.camera, this.renderer.domElement);
   }
   getTHREE() {
     return this.THREE;
