@@ -13,8 +13,8 @@ export default class VideoPlaneMesh {
     this.mesh.lookAt(tableScene.getCamera().position);
     //this.mesh.rotation.x = 0.3;
     this.mesh.rotation.y = 0.45 * (index % 2 == 0 ? -1 : 1);
-    this.mesh.position.setY(1 * index);
-    this.mesh.position.setX(1 * index);
+    this.mesh.position.set(2 * (index % 2 == 0 ? 1 : -1), 2, 0);
+    //this.mesh.position.setX(1 * index);
     //    this.mesh.position.setY(200 * positionY);
     tableScene.getScene().add(this.mesh);
 
@@ -23,16 +23,6 @@ export default class VideoPlaneMesh {
       tableScene.getCamera(),
       tableScene.getRenderer().domElement
     );
-
-    // add event listener to highlight dragged objects
-
-    this.controls.addEventListener("dragstart", function (event) {
-      event.object.material.emissive.set(0xaaaaaa);
-    });
-
-    this.controls.addEventListener("dragend", function (event) {
-      event.object.material.emissive.set(0x000000);
-    });
   }
   getGeometry() {
     return this.geometry;

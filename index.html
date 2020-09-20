@@ -28,6 +28,7 @@
     <script type="module">
       import TableScene from "./src/TableScene.js";
       import TableObject from "./src/TableObject.js";
+      import Card from "./src/Card.js";
       import VideoPlaneMesh from "./src/VideoPlaneMesh.js";
       window.addEventListener("DOMContentLoaded", (event) => {
         let buttonStart = document.querySelector("#start");
@@ -41,6 +42,8 @@
             console.log(index);
             let videoMesh = new VideoPlaneMesh(tableScene, v, index);
           });
+
+          let card = new Card(tableScene);
 
           tableScene.initAnimate(tableObj.getMesh());
         });

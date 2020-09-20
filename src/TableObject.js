@@ -12,6 +12,7 @@ export default class TableObject {
 
     tableScene.getCamera().position.z = 5;
 
+    /*
     this.controls = new DragControls(
       [this.getMesh()],
       tableScene.getCamera(),
@@ -27,6 +28,7 @@ export default class TableObject {
     this.controls.addEventListener("dragend", function (event) {
       event.object.material.emissive.set(0x000000);
     });
+    */
   }
   getMesh() {
     return this.cube;
