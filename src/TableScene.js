@@ -2,6 +2,10 @@ import { OrbitControls } from "./controls/OrbitControls.js";
 
 export default class TableScene {
   constructor(THREE, window, document) {
+    this.pickHelper = new PickHelper();
+    this.pickPosition = { x: 0, y: 0 };
+    this.clearPickPosition();
+
     this.lights = [];
     this.window = window;
 
@@ -43,7 +47,7 @@ export default class TableScene {
     var planeW = window.innerWidth; // pixels
     var planeH = window.innerHeight; // pixels
     var plane = new THREE.Mesh(
-      new THREE.PlaneGeometry(planeW / 2, planeH / 2, 200, 200),
+      new THREE.PlaneGeometry(10, 10, 10, 10),
       new THREE.MeshBasicMaterial({
         color: 0xffffff,
         wireframe: true,
@@ -52,7 +56,41 @@ export default class TableScene {
 
     this.scene.add(plane);
 
-    //this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    console.log(this.camera.position);
+    this.camera.position.z = 10;
+    console.log(this.camera.position);
+
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+
+    window.addEventListener("mousemove", (e) => {
+      this.setPickPosition(e);
+    });
+    window.addEventListener("mouseout", (e) => {
+      this.clearPickPosition(e);
+    });
+    window.addEventListener("mouseleave", (e) => {
+      this.clearPickPosition(e);
+    });
+  }
+  setPickPosition(event) {
+    let rect = this.canvas.getBoundingClientRect();
+    let pos = {
+      x: ((event.clientX - rect.left) * this.canvas.width) / rect.width,
+      y: ((event.clientY - rect.top) * this.canvas.height) / rect.height,
+    };
+    this.pickPosition.x = (pos.x / this.canvas.width) * 2 - 1;
+    this.pickPosition.y = (pos.y / this.canvas.height) * -2 + 1; // note we flip Y
+
+    //if (new Date().getTime() % 2000 == 0)
+    //console.log(this.pickPosition);
+  }
+  clearPickPosition() {
+    // unlike the mouse which always has a position
+    // if the user stops touching the screen we want
+    // to stop picking. For now we just pick a value
+    // unlikely to pick something
+    this.pickPosition.x = -100000;
+    this.pickPosition.y = -100000;
   }
   getTHREE() {
     return this.THREE;
@@ -82,7 +120,45 @@ export default class TableScene {
   animate(obj, time) {
     obj.rotation.x += 0.01;
     obj.rotation.y += 0.01;
+
+    this.pickHelper.pick(this.pickPosition, this.scene, this.camera, time);
     this.renderer.render(this.scene, this.camera);
     this.initAnimate(obj);
+  }
+}
+
+class PickHelper {
+  constructor() {
+    this.raycaster = new THREE.Raycaster();
+    this.pickedObject = null;
+    this.pickedObjectSavedColor = 0;
+  }
+  pick(normalizedPosition, scene, camera, time) {
+    // restore the color if there is a picked object
+    if (this.pickedObject && this.pickedObject.material.emissive) {
+      this.pickedObject.material.emissive.setHex(this.pickedObjectSavedColor);
+      this.pickedObject = undefined;
+    }
+
+    // cast a ray through the frustum
+    this.raycaster.setFromCamera(normalizedPosition, camera);
+
+    // get the list of objects the ray intersected
+    const intersectedObjects = this.raycaster.intersectObjects(scene.children);
+
+    console.log(intersectedObjects.length);
+    if (intersectedObjects.length) {
+      // pick the first object. It's the closest one
+      this.pickedObject = intersectedObjects[0].object;
+      console.log(this.pickedObject);
+      // save its color
+      if (this.pickedObject.material.emissive) {
+        this.pickedObjectSavedColor = this.pickedObject.material.emissive.getHex();
+        // set its emissive color to flashing red/yellow
+        this.pickedObject.material.emissive.setHex(
+          (time * 8) % 2 > 1 ? 0xffff00 : 0xff0000
+        );
+      }
+    }
   }
 }

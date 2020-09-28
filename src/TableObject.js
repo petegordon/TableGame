@@ -10,8 +10,6 @@ export default class TableObject {
     this.cube = new THREE.Mesh(this.geometry, this.material);
     tableScene.getScene().add(this.cube);
 
-    tableScene.getCamera().position.z = 5;
-
     /*
     this.controls = new DragControls(
       [this.getMesh()],
