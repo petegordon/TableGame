@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>My first Jitsi Room app</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="src/libs/jquery-2.1.1.min.js"></script>
+    <script src="src/libs/strophe/strophe.js"></script>
+    <script src="src/libs/strophe/strophe.disco.min.js?v=1"></script>
+    <script src="src/libs/lib-jitsi-meet.js"></script>
+    <script type="module">
+      import ConferenceRoom from "./src/ConferenceRoom.js";
+
+      var roomName = null;
+      var conferenceRoom = null;
+      /*
+      async function endConferenceRoom() {
+        if (conferenceRoom != null) {
+          await conferenceRoom.leaveConferenceRoom();
+        }
+        let element = document.getElementById("controlContainer");
+        if (element != "undefined" && element != null) {
+          document.querySelector("#controlContainer").style.display = "none";
+        }
+      }
+*/
+
+      function startConferenceRoom(roomNumber) {
+        conferenceRoom.joinConferenceRoom(roomNumber);
+
+        document
+          .querySelector("#audioOutputSelect")
+          .addEventListener("change", (evt) => {
+            console.log(evt);
+            console.log(evt.target);
+            console.log(evt.target.selected);
+            conferenceRoom.changeAudioOutput(evt.target);
+          });
+        document.querySelector("#unload").addEventListener("click", (evt) => {
+          conferenceRoom.unload();
+          document.getElementById("controlContainer").remove();
+        });
+
+        document
+          .querySelector("#switchVideo")
+          .addEventListener("click", (evt) => {
+            conferenceRoom.switchVideo();
+          });
+      }
+      function log(txt) {
+        document.querySelector("#logging").value +=
+          new Date() + ":: " + txt + "\n";
+      }
+      var connected = false;
+      var tryingToConnect = false;
+      var tryingToDisconnect = false;
+
+      var queue = [];
+
+      function getConferenceConnection(roomNumber) {
+        //always end any conference room before starting a new one
+
+        if (!tryingToConnect && !tryingToDisconnect) {
+          tryingToConnect = true;
+          document.querySelector("#controlContainer").style.display = "block";
+
+          var serverURL = "beta.meet.jit.si";
+          var roomId = roomName + roomNumber;
+          document.querySelector("#status").innerText = "Joining.";
+          conferenceRoom = new ConferenceRoom(
+            serverURL,
+            roomNumber,
+            JitsiMeetJS,
+            $,
+            () => {
+              document.querySelector("#status").innerText = "Connected.";
+              log("connected to " + roomNumber);
+              tryingToConnect = false;
+              connected = true;
+            },
+            () => {
+              document.querySelector("#status").innerText = "Disconnected.";
+              log("disconnected from " + roomNumber);
+              $("video").remove();
+              $("audio").remove();
+              tryingToDisconnect = false;
+              connected = false;
+            }
+          );
+        }
+      }
+
+      window.addEventListener("DOMContentLoaded", (event) => {
+        roomName = document
+          .querySelector("#txtConferenceRoom")
+          .value.toLowerCase();
+
+        document.querySelectorAll(".btn-room").forEach((el) => {
+          el.addEventListener("click", async (evt) => {
+            //if (conferenceRoom != null) await conferenceRoom.unload();
+            console.log(evt.target.dataset.roomNum);
+            conferenceRoom.joinConferenceRoom(
+              roomName + evt.target.dataset.roomNum
+            );
+            //getConferenceConnection(roomName + evt.target.dataset.roomNum);
+          });
+        });
+        document.querySelector("#leave").addEventListener("click", (evt) => {
+          console.log("Conference Room Leave");
+          if (!tryingToConnect && !tryingToDisconnect) {
+            tryingToDisconnect = true;
+            conferenceRoom.unload();
+          }
+        });
+
+        document.querySelector("#start").addEventListener("click", (evt) => {});
+        console.log("DOM fully loaded and parsed");
+        getConferenceConnection(roomName + 0);
+      });
+    </script>
+    <div id="status">Welcome!</div>
+    <input type="text" id="txtConferenceRoom" value="pete" />
+    <button id="start">Start</button>
+    <button id="room1" class="btn-room" data-room-num="1" type="button">
+      Room 1
+    </button>
+    <button id="room2" class="btn-room" data-room-num="2" type="button">
+      Room 2
+    </button>
+    <button id="room3" class="btn-room" data-room-num="3" type="button">
+      Room 3
+    </button>
+    <button id="room4" class="btn-room" data-room-num="4" type="button">
+      Room 4
+    </button>
+    <div id="controlContainer" style="display: none">
+      <button id="leave">Leave</button>
+      <button id="unload">Unload</button>
+      <button id="switchVideo">switchVideo</button>
+      <div id="audioOutputSelectWrapper">
+        Change audio output device
+        <select id="audioOutputSelect"></select>
+      </div>
+    </div>
+    <div id="avContainer"></div>
+    <textarea id="logging" style="width: 800px; height: 200px"></textarea>
+  </body>
+</html>
