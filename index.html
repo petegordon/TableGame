@@ -43,7 +43,16 @@
             let videoMesh = new VideoPlaneMesh(tableScene, v, index);
           });
 
+          let deckCards = [];
           let card = new Card(tableScene);
+          console.log("card created");
+
+          for (let i = 0; i < 52; i++) {
+            let newCard = card.clone(tableScene);
+            console.log("new card:" + i + " created");
+            newCard.getMesh().position.set(-2, i / 156, 0);
+            deckCards.push(newCard);
+          }
 
           tableScene.initAnimate(tableObj.getMesh());
         });

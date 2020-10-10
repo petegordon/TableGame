@@ -69,34 +69,32 @@
       function getConferenceConnection(roomNumber) {
         //always end any conference room before starting a new one
 
-        if (!tryingToConnect && !tryingToDisconnect) {
-          tryingToConnect = true;
-          document.querySelector("#controlContainer").style.display = "block";
+        tryingToConnect = true;
+        document.querySelector("#controlContainer").style.display = "block";
 
-          var serverURL = "beta.meet.jit.si";
-          var roomId = roomName + roomNumber;
-          document.querySelector("#status").innerText = "Joining.";
-          conferenceRoom = new ConferenceRoom(
-            serverURL,
-            roomNumber,
-            JitsiMeetJS,
-            $,
-            () => {
-              document.querySelector("#status").innerText = "Connected.";
-              log("connected to " + roomNumber);
-              tryingToConnect = false;
-              connected = true;
-            },
-            () => {
-              document.querySelector("#status").innerText = "Disconnected.";
-              log("disconnected from " + roomNumber);
-              $("video").remove();
-              $("audio").remove();
-              tryingToDisconnect = false;
-              connected = false;
-            }
-          );
-        }
+        var serverURL = "beta.meet.jit.si";
+        var roomId = roomName + roomNumber;
+        document.querySelector("#status").innerText = "Joining.";
+        conferenceRoom = new ConferenceRoom(
+          serverURL,
+          roomNumber,
+          JitsiMeetJS,
+          $,
+          () => {
+            document.querySelector("#status").innerText = "Connected.";
+            log("connected to " + roomNumber);
+            tryingToConnect = false;
+            connected = true;
+          },
+          () => {
+            document.querySelector("#status").innerText = "Disconnected.";
+            log("disconnected from " + roomNumber);
+            $("video").remove();
+            $("audio").remove();
+            tryingToDisconnect = false;
+            connected = false;
+          }
+        );
       }
 
       window.addEventListener("DOMContentLoaded", (event) => {
@@ -114,12 +112,9 @@
             //getConferenceConnection(roomName + evt.target.dataset.roomNum);
           });
         });
-        document.querySelector("#leave").addEventListener("click", (evt) => {
-          console.log("Conference Room Leave");
-          if (!tryingToConnect && !tryingToDisconnect) {
-            tryingToDisconnect = true;
-            conferenceRoom.unload();
-          }
+        document.querySelector("#unload").addEventListener("click", (evt) => {
+          console.log("Conference Room Unload");
+          conferenceRoom.unload();
         });
 
         document.querySelector("#start").addEventListener("click", (evt) => {});

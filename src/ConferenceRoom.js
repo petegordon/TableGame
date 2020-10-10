@@ -148,6 +148,7 @@ export default class ConferenceRoom {
    */
   onConferenceJoined() {
     console.log("room joined!");
+
     this.isJoined = true;
     for (let i = 0; i < this.localTracks.length; i++) {
       this.room.addTrack(this.localTracks[i]);
@@ -155,11 +156,14 @@ export default class ConferenceRoom {
   }
   onConferenceLeft() {
     console.log("room left!");
+    /*    
     this.isJoined = false;
     for (let i = 0; i < this.localTracks.length; i++) {
-      //      this.room.removeTrack(this.localTracks[i]);
+      this.room.removeTrack(this.localTracks[i]);
     }
+*/
   }
+
   /**
    *
    * @param id
@@ -175,8 +179,13 @@ export default class ConferenceRoom {
     const tracks = this.remoteTracks[id];
 
     for (let i = 0; i < tracks.length; i++) {
-      tracks[i].detach($(`#${id}${tracks[i].getType()}`));
-      //$(`#${id}${tracks[i].getType()}`).remove();
+      try {
+        tracks[i].detach($(`#${id}${tracks[i].getType()}`));
+      } catch (error) {
+        console.error(error);
+      }
+      console.log(`#${id}${tracks[i].getType()}${i}`);
+      $(`#${id}${tracks[i].getType()}${i}`).remove();
     }
   }
   async joinConferenceRoom(newRoom) {
