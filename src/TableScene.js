@@ -1,11 +1,10 @@
 import { OrbitControls } from "./controls/OrbitControls.js";
+import { EffectComposer } from "./postprocessing/EffectComposer.js";
+import { RenderPass } from "./postprocessing/RenderPass.js";
+import { OutlinePass } from "./postprocessing/OutlinePass.js";
 
 export default class TableScene {
   constructor(THREE, window, document) {
-    this.pickHelper = new PickHelper();
-    this.pickPosition = { x: 0, y: 0 };
-    this.clearPickPosition();
-
     this.lights = [];
     this.window = window;
 
@@ -18,8 +17,22 @@ export default class TableScene {
       1000
     );
 
+    this.outlinePass = new OutlinePass(
+      THREE.Vector2(window.innerWidth, window.innerHeight),
+      this.scene,
+      this.camera
+    );
+    this.pickHelper = new PickHelper();
+    this.pickPosition = { x: 0, y: 0 };
+    this.clearPickPosition();
+
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+    this.effectComposer = new EffectComposer(this.renderer);
+    this.effectComposer.addPass(new RenderPass(this.scene, this.camera));
+    this.effectComposer.addPass(this.outlinePass);
+
     this.canvas = this.renderer.domElement;
     document.body.appendChild(this.canvas);
 
@@ -42,7 +55,7 @@ export default class TableScene {
 
     var gridHelper = new THREE.GridHelper(size, divisions);
     this.scene.add(gridHelper);
-
+    /*
     // each square
     var planeW = window.innerWidth; // pixels
     var planeH = window.innerHeight; // pixels
@@ -55,7 +68,7 @@ export default class TableScene {
     );
 
     this.scene.add(plane);
-
+*/
     console.log(this.camera.position);
     this.camera.position.z = 10;
     console.log(this.camera.position);
@@ -121,8 +134,15 @@ export default class TableScene {
     obj.rotation.x += 0.01;
     obj.rotation.y += 0.01;
 
-    this.pickHelper.pick(this.pickPosition, this.scene, this.camera, time);
-    this.renderer.render(this.scene, this.camera);
+    this.pickHelper.pick(
+      this.pickPosition,
+      this.scene,
+      this.camera,
+      time,
+      this.outlinePass
+    );
+    //this.renderer.render(this.scene, this.camera);
+    this.effectComposer.render();
     this.initAnimate(obj);
   }
 }
@@ -133,7 +153,7 @@ class PickHelper {
     this.pickedObject = null;
     this.pickedObjectSavedColor = 0;
   }
-  pick(normalizedPosition, scene, camera, time) {
+  pick(normalizedPosition, scene, camera, time, outlinePass) {
     // restore the color if there is a picked object
     if (this.pickedObject && this.pickedObject.material.emissive) {
       this.pickedObject.material.emissive.setHex(this.pickedObjectSavedColor);
@@ -150,6 +170,9 @@ class PickHelper {
     if (intersectedObjects.length) {
       // pick the first object. It's the closest one
       this.pickedObject = intersectedObjects[0].object;
+
+      outlinePass.selectedObjects = [this.pickedObject];
+
       //      console.log(this.pickedObject);
       // save its color
       if (this.pickedObject.material.emissive) {

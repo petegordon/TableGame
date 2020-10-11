@@ -30,9 +30,11 @@
       import TableObject from "./src/TableObject.js";
       import Card from "./src/Card.js";
       import VideoPlaneMesh from "./src/VideoPlaneMesh.js";
+
       window.addEventListener("DOMContentLoaded", (event) => {
         let buttonStart = document.querySelector("#start");
         buttonStart.addEventListener("click", () => {
+          console.log("start clicked");
           let tableScene = new TableScene(THREE, window, document);
 
           let tableObj = new TableObject(tableScene);
@@ -80,6 +82,6 @@
       }
 */
     </script>
-    <button id="start" type="button">Start ThreeJS Scene</button>
+    <button id="start" type="button">Start ThreeJS Scene Test</button>
   </body>
 </html>
