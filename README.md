@@ -4,7 +4,7 @@ Table top card game in ThreeJS with Jitsi Video Conferencing.
 </br>
 </br>
 <p>Come join the discussion:</p>
-<a href="https://discord.gg/dGCbHU"><img src="https://static.planetminecraft.com/files/resource_media/screenshot/1719/discord1-1494780898.png" alt="Discord" width="200"/></a>
+<a href="https://discord.gg/ewpWzwR"><img src="https://static.planetminecraft.com/files/resource_media/screenshot/1719/discord1-1494780898.png" alt="Discord" width="200"/></a>
 </br>
 </br>
 </br>
