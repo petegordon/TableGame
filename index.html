@@ -53,8 +53,10 @@
             let newCard = card.clone(tableScene);
             console.log("new card:" + i + " created");
             newCard.getMesh().position.set(-2, i / 156, 0);
+            tableScene.getScene().add(newCard.getMesh())
             deckCards.push(newCard);
           }
+          
 
           tableScene.initAnimate(tableObj.getMesh());
         });

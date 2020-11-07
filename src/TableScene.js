@@ -53,8 +53,8 @@ export default class TableScene {
     var size = 10;
     var divisions = 10;
 
-    var gridHelper = new THREE.GridHelper(size, divisions);
-    this.scene.add(gridHelper);
+//    var gridHelper = new THREE.GridHelper(size, divisions);
+//    this.scene.add(gridHelper);
     /*
     // each square
     var planeW = window.innerWidth; // pixels
@@ -84,6 +84,16 @@ export default class TableScene {
     window.addEventListener("mouseleave", (e) => {
       this.clearPickPosition(e);
     });
+    window.addEventListener("keydown", (e) => {
+      console.log(e.keyCode)
+      console.log(e.code)
+      if(e.code === "KeyF"){
+        console.log("flip the picked")
+        console.log(this.pickHelper.pickedObject)
+        this.pickHelper.pickedObject.parent.rotateZ(Math.PI)
+      }
+    });    
+
   }
   setPickPosition(event) {
     let rect = this.canvas.getBoundingClientRect();
@@ -164,7 +174,7 @@ class PickHelper {
     this.raycaster.setFromCamera(normalizedPosition, camera);
 
     // get the list of objects the ray intersected
-    const intersectedObjects = this.raycaster.intersectObjects(scene.children);
+    const intersectedObjects = this.raycaster.intersectObjects(scene.children, true);
 
     //    console.log(intersectedObjects.length);
     if (intersectedObjects.length) {
@@ -175,6 +185,10 @@ class PickHelper {
 
       //      console.log(this.pickedObject);
       // save its color
+      if(this.pickedObject.type == "Mesh"){
+        console.log("mesh it is!")
+        console.log(this.pickedObject)
+      }
       if (this.pickedObject.material.emissive) {
         this.pickedObjectSavedColor = this.pickedObject.material.emissive.getHex();
         // set its emissive color to flashing red/yellow
